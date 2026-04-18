@@ -76,7 +76,7 @@ class CategoryController extends ChangeNotifier {
     return lastAddedDevices;
   }
 
-  addToCart(DeviceModel deviceModel) {
+  void addToCart(DeviceModel deviceModel) {
     loadingWithText(text: 'اضافة للسلة...');
     getIt<FirebaseService>().firestore.collection('cart').add({
       "userID": SharedPrefController().getUser().userId,

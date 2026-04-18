@@ -32,65 +32,107 @@ class _DeviceViewState extends State<DeviceView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(title: widget.category.name),
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Consumer<CategoryController>(
         builder: (context, categoryProvider, child) {
           if (categoryProvider.devices.status == Status.COMPLETED) {
             return GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               itemCount: categoryProvider.devices.data!.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.9,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                childAspectRatio: 0.75,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemBuilder: (context, index) {
-                return InkWell(
+                final device = categoryProvider.devices.data![index];
+                return GestureDetector(
                   onTap: () {
                     NavigationManager.pushNamed(
                       RouteName.devicesDetailsView,
-                      arguments: categoryProvider.devices.data![index],
+                      arguments: device,
                     );
                   },
                   child: Container(
-                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Image Container
                         Container(
-                          clipBehavior: Clip.antiAlias,
-                          height: 130,
-                          width: 150,
+                          height: 140,
+                          width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey.shade100,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(18),
+                              topRight: Radius.circular(18),
+                            ),
                           ),
-                          child: NetworkCustomImageWidget(
-                            height: 120,
-                            imageUrl:
-                                categoryProvider.devices.data![index].image,
-                            fit: BoxFit.fill,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(18),
+                              topRight: Radius.circular(18),
+                            ),
+                            child: NetworkCustomImageWidget(
+                              height: 140,
+                              imageUrl: device.image,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                        Text(
-                          categoryProvider.devices.data![index].name,
-                          style: context.b1.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          'USD ${categoryProvider.devices.data![index].price}',
-                          style: context.b1.copyWith(
-                            color: ColorManager.blue,
-                            fontWeight: FontWeight.bold,
+                        // Details Container
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Device Name
+                                Text(
+                                  device.name,
+                                  style: context.b1.copyWith(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                // Price Badge
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorManager.blue.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    '\$${device.price}',
+                                    style: context.b1.copyWith(
+                                      color: ColorManager.blue,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -100,8 +142,31 @@ class _DeviceViewState extends State<DeviceView> {
               },
             );
           } else if (categoryProvider.devices.status == Status.ERROR) {
-            return Text(
-              categoryProvider.devices.message ?? 'something went wrong',
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 80,
+                    color: Colors.red.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'حدث خطأ',
+                    style: context.h1.copyWith(color: Colors.red, fontSize: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    categoryProvider.devices.message ?? 'فشل تحميل المنتجات',
+                    style: context.b1.copyWith(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             );
           } else {
             return loading();

@@ -19,13 +19,14 @@ class MostOrderedSection extends StatelessWidget {
     return Consumer<HomeController>(
       builder: (context, homeProvider, child) {
         return SizedBox(
-          height: 190,
+          height: 200,
           child: ListView.separated(
             padding: const EdgeInsets.only(right: 20),
             itemCount: 5,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               if (homeProvider.mostOrderedDevices.status == Status.COMPLETED) {
+                final item = homeProvider.mostOrderedDevices.data![index];
                 return InkWell(
                   onTap: () {
                     NavigationManager.pushNamed(
@@ -33,41 +34,58 @@ class MostOrderedSection extends StatelessWidget {
                       arguments: homeProvider.mostOrderedDevices.data![index],
                     );
                   },
-                  child: Column(
-                    children: [
-                      Container(
-                        clipBehavior: Clip.antiAlias,
-                        height: 130,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: 160,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
                         ),
-                        child: NetworkCustomImageWidget(
-                          height: 130,
-                          imageUrl: homeProvider
-                              .mostOrderedDevices
-                              .data![index]
-                              .image,
-                          fit: BoxFit.fill,
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                          child: NetworkCustomImageWidget(
+                            height: 120,
+                            imageUrl: item.image,
+                            fit: BoxFit.fitHeight,
+                          ),
                         ),
-                      ),
-                      Text(
-                        homeProvider.mostOrderedDevices.data![index].name,
-                        style: context.b1.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.b1.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'USD ${item.price}',
+                                style: context.b1.copyWith(
+                                  color: ColorManager.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        'USD ${homeProvider.mostOrderedDevices.data![index].price}',
-                        style: context.b1.copyWith(
-                          color: ColorManager.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               } else if (homeProvider.mostOrderedDevices.status ==

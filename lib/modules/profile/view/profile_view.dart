@@ -15,65 +15,71 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarCustom(title: 'الملف الشخصي'),
+      backgroundColor: const Color(0xFFF8F9FA),
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
           const PersonalCardInfo(),
-          const SizedBox(
-            height: 16,
+          const SizedBox(height: 24),
+
+          // Settings Section
+          Text(
+            'الإعدادات والدعم',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
+          const SizedBox(height: 12),
+
           Card(
-            color: Colors.white,
-            elevation: 0,
-            margin: const EdgeInsets.only(top: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 children: [
                   ProfileCustomListTile(
+                    icon: Icons.mail_outline,
                     text: 'تواصل معنا',
                     onTap: () {
                       NavigationManager.pushNamed(RouteName.contactUsView);
                     },
                   ),
-                  const Divider(
-                    thickness: 1,
-                    height: 10,
-                  ),
+                  Divider(color: Colors.grey.shade200, thickness: 1, height: 1),
                   ProfileCustomListTile(
+                    icon: Icons.info_outline,
                     text: 'عن التطبيق',
                     onTap: () {
                       NavigationManager.pushNamed(RouteName.aboutAppView);
                     },
                   ),
-                  const Divider(
-                    thickness: 1,
-                    height: 10,
-                  ),
+                  Divider(color: Colors.grey.shade200, thickness: 1, height: 1),
                   ProfileCustomListTile(
-                    text: 'سياسية الاستخدام',
+                    icon: Icons.description_outlined,
+                    text: 'سياسة الاستخدام',
                     onTap: () {
                       NavigationManager.pushNamed(RouteName.usesPoliceView);
                     },
                   ),
-                  const Divider(
-                    thickness: 1,
-                    height: 10,
-                  ),
+                  Divider(color: Colors.grey.shade200, thickness: 1, height: 1),
                   ProfileCustomListTile(
-                    text: 'سياسية الخصوصية',
+                    icon: Icons.security_outlined,
+                    text: 'سياسة الخصوصية',
                     onTap: () {
                       NavigationManager.pushNamed(RouteName.privacyPoliceView);
                     },
                   ),
-                  const Divider(
-                    thickness: 1,
-                    height: 10,
-                  ),
+                  Divider(color: Colors.grey.shade200, thickness: 1, height: 1),
                   ProfileCustomListTile(
+                    icon: Icons.help_outline,
                     text: 'الأسئلة الشائعة',
                     onTap: () {
                       NavigationManager.pushNamed(RouteName.faqView);
@@ -83,38 +89,75 @@ class ProfileView extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+
+          // Logout Section
           Card(
-            color: Colors.white,
-            elevation: 0,
-            margin: const EdgeInsets.only(top: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            child: ListTile(
-              onTap: () async {
-                var value = await customDialogWidget(context,
-                    message: 'هل انت متاكد من تسجيل الخروج');
-                if (value == true) {
-                  context.read<ProfileController>().logOut();
-                }
-              },
-              title: const Text(
-                'تسجيل الخروح',
-              ),
-              trailing: Container(
-                  height: 22,
-                  width: 22,
-                  margin: EdgeInsets.zero,
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.logout_outlined,
-                    size: 15,
-                  )),
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-          )
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () async {
+                    var value = await customDialogWidget(
+                      context,
+                      message: 'هل انت متأكد من تسجيل الخروج؟',
+                    );
+                    if (value == true) {
+                      context.read<ProfileController>().logOut();
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.logout_outlined,
+                            color: Colors.red.shade600,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            'تسجيل الخروج',
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(
+                                  color: Colors.red.shade600,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.red.withOpacity(0.4),
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

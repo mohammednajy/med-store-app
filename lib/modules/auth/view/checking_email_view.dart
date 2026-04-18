@@ -5,7 +5,6 @@ import '../../../core/utils/extentions.dart';
 
 import '../../../core/utils/asset_path_manager.dart';
 import '../../../core/utils/color_manager.dart';
-import '../../../core/utils/constant.dart';
 
 class CheckingEmailView extends StatelessWidget {
   const CheckingEmailView({super.key});
@@ -13,49 +12,102 @@ class CheckingEmailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(
-          color: ColorManager.blue,
-        ),
-        centerTitle: false,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: Stack(
         children: [
+          const _Background(),
+
+          SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: _Content(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Background extends StatelessWidget {
+  const _Background();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4A90E2), Color(0xFF6FB1FC)],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+      ),
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /// 📩 Image / Icon
+          Image.asset(AssetPathManager.checkEmail, height: 120),
+
+          const SizedBox(height: 15),
+
+          /// 🏷 Title
+          Text(
+            'تحقق من بريدك الإلكتروني',
+            style: context.h1.copyWith(fontSize: 22, color: Colors.black87),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 10),
+
+          /// 📝 Description
+          Text(
+            'لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.\nيرجى التحقق من صندوق الوارد.',
+            style: context.b1.copyWith(color: Colors.grey[700], fontSize: 15),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 25),
+
+          /// 🚀 Button
           SizedBox(
-            height: height / 9,
-          ),
-          Image.asset(
-            AssetPathManager.checkEmail,
-            height: 150,
-            width: 76,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'التحقق من البريد الالكتروني',
-            style: context.h1.copyWith(fontSize: 30),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            'لقد قمنا بارسال رابط استعادة كلمة المرور الى بريدك الالكتروني٬ يرجى الضغط على الرابط هناك لاسترجاع كلمة المرور',
-            textAlign: TextAlign.center,
-            style: context.b1.copyWith(fontSize: 20),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const SizedBox(
+            width: double.infinity,
             height: 50,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              NavigationManager.popUntil(RouteName.login);
-            },
-            child: const Text('الذهاب لتسجيل الدخول', style: TextStyle(color: Colors.white)),
+            child: ElevatedButton(
+              onPressed: () {
+                NavigationManager.popUntil(RouteName.login);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: const Text(
+                'العودة لتسجيل الدخول',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),

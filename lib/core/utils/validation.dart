@@ -1,4 +1,5 @@
 extension ValidationExt on String {
+
   String? get isValidEmail {
     final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     String? result;

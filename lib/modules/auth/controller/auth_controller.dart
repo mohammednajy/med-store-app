@@ -11,7 +11,7 @@ import '../../../core/services/remote_services/firebase_init.dart';
 import '../../../core/utils/auth_exceptions.dart';
 
 class AuthController extends ChangeNotifier {
-  register(UserModel user) async {
+  Future<void> register(UserModel user) async {
     loadingWithText();
     try {
       UserCredential credential =
@@ -35,7 +35,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  login({
+  Future<void> login({
     required String email,
     required String password,
   }) async {
@@ -68,7 +68,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  createUser(UserModel user) {
+  void createUser(UserModel user) {
     try {
       getIt<FirebaseService>().firestore.collection('users').add(user.toJson());
     } on Exception catch (e) {
@@ -76,7 +76,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  updateUser(String email, String password) async {
+  Future<void> updateUser(String email, String password) async {
     try {
       final id = await getIt<FirebaseService>()
           .firestore

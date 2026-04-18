@@ -3,7 +3,6 @@ import '../../../core/router/router.dart';
 import '../../../core/router/routers_name.dart';
 import '../../../core/utils/asset_path_manager.dart';
 import '../../../core/utils/color_manager.dart';
-import '../../../core/utils/constant.dart';
 import '../../../core/utils/extentions.dart';
 
 class AuthView extends StatelessWidget {
@@ -12,75 +11,136 @@ class AuthView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: Stack(
         children: [
-          SizedBox(
-            height: height / 9,
-          ),
-          Text(
-            'أَهْلًا وَسَهْلًا 🤩',
-            style: context.h1.copyWith(fontSize: 30),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'أهلاً بك في أفضل تطبيق لشراء الأجهزة الطبية. نقدم لك تجربة تسوق مريحة وآمنة لاحتياجات صحتك.',
-            style: context.b1.copyWith(
-              color: Colors.black45,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(
-            height: height / 9,
-          ),
-          SizedBox(
-              height: height / 3.5,
-              child: Image.asset(
-                AssetPathManager.authImage,
-                fit: BoxFit.fitHeight,
-              )),
-          SizedBox(
-            height: height / 8.3,
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: ElevatedButton(
-                onPressed: () {
-                  NavigationManager.goToAndRemove(RouteName.login);
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                          color: ColorManager.blue,
-                        ))),
-                child: const Text(
-                  'تسجيل دخول',
-                  style: TextStyle(
-                    color: ColorManager.blue,
-                  ),
-                ),
-              )),
-              const SizedBox(
-                width: 10,
+          const _Background(),
+
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Spacer(),
+
+                  /// 🏷 Title
+                  _Header(),
+
+                  const SizedBox(height: 30),
+
+                  /// 🖼 Image
+                  _ImageSection(),
+
+                  const Spacer(),
+
+                  /// 🔘 Buttons
+                  _Actions(),
+
+                  const SizedBox(height: 20),
+                ],
               ),
-              Expanded(
-                  child: ElevatedButton(
-                onPressed: () {
-                  NavigationManager.goToAndRemove(RouteName.register);
-                },
-                child: const Text('انشاء حساب', style: TextStyle(color: Colors.white),),
-              )),
-            ],
-          )
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _ImageSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220,
+      child: Image.asset(AssetPathManager.authImage, fit: BoxFit.contain),
+    );
+  }
+}
+
+class _Background extends StatelessWidget {
+  const _Background();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4A90E2), Color(0xFF6FB1FC)],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'أهلاً وسهلاً 👋',
+          style: context.h1.copyWith(fontSize: 26, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'أفضل تطبيق لشراء الأجهزة الطبية بسهولة وأمان',
+          style: context.b1.copyWith(color: Colors.white70),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+class _Actions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        /// 🚀 Primary (Register)
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              NavigationManager.goToAndRemove(RouteName.register);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: ColorManager.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: const Text('إنشاء حساب'),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        /// 🔹 Secondary (Login)
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton(
+            onPressed: () {
+              NavigationManager.goToAndRemove(RouteName.login);
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.white),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: const Text(
+              'تسجيل الدخول',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

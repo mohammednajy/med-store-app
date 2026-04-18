@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical_devices_app/core/utils/color_manager.dart';
 import '../../../core/utils/extentions.dart';
 import '../controller/home_controller.dart';
 import 'category_section.dart';
@@ -33,81 +34,83 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const AppBarCustom(
-          title: 'الرئيسية',
-          showCart: true,
+      appBar: const AppBarCustom(title: 'الرئيسية', showCart: true),
+      body: RefreshIndicator(
+        onRefresh: () => Future.wait([
+          context.read<CategoryController>().getCategory(),
+          context.read<HomeController>().getLastAddedDevices(),
+          context.read<HomeController>().getMostOrderedDevices(),
+        ]),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                height: 140,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [ColorManager.blue, Colors.blueAccent],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Center(
+                  child: Text(
+                    'أفضل الأجهزة الطبية لك',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: TextFormField(
+                onTap: () {
+                  showSearch(
+                    context: context,
+                    delegate: DevicesSearchDelegate(),
+                  );
+                },
+                readOnly: true,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.shade200,
+                  hintText: 'كلمة البحث هنا...',
+                  prefixIcon: const Icon(Icons.search),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Text('الفئات', style: context.h1.copyWith(fontSize: 20)),
+            ),
+            const SizedBox(height: 20),
+            const CategorySection(),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Text(
+                'الأكثر طلباً',
+                style: context.h1.copyWith(fontSize: 20),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const MostOrderedSection(),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Text(
+                'المضافة حديثاً',
+                style: context.h1.copyWith(fontSize: 20),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const LastAddedSection(),
+          ],
         ),
-        body: RefreshIndicator(
-          onRefresh: () => Future.wait([
-            context.read<CategoryController>().getCategory(),
-            context.read<HomeController>().getLastAddedDevices(),
-            context.read<HomeController>().getMostOrderedDevices(),
-          ]),
-          child: ListView(
-            physics: const BouncingScrollPhysics(),
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  onTap: () {
-                    showSearch(
-                        context: context, delegate: DevicesSearchDelegate());
-                  },
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      hintText: 'كلمة البحث هنا...',
-                      prefixIcon: const Icon(Icons.search)),
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  'الفئات',
-                  style: context.h1.copyWith(fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const CategorySection(),
-              const SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  'الأكثر طلباً',
-                  style: context.h1.copyWith(fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const MostOrderedSection(),
-              const SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  'المضافة حديثاً',
-                  style: context.h1.copyWith(fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const LastAddedSection(),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 }

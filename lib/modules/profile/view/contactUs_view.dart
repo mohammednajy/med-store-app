@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/utils/extentions.dart';
+import '../../../core/utils/color_manager.dart';
 import '../../../core/widgets/appbar_custom.dart';
 import '../controller/profile_controller.dart';
 import 'package:provider/provider.dart';
@@ -11,43 +11,97 @@ class ContactUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarCustom(title: 'تواصل معنا'),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 15,
-        ),
-        child: Column(
-          children: [
-            Text(
-              'شكرًا لاستخدامكم متجرنا الإلكتروني للأجهزة الطبية. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل معنا باستخدام الوسائل التالية: 😊 ',
-              style: context.b1,
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        children: [
+          // Header Card
+          Card(
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            const SizedBox(height: 30),
-            ContactUsButton(
-              icon: Icons.chat_bubble_outline,
-              text: 'رسالة واتساب',
-              onPressed: () {
-                context.read<ProfileController>().whatsappSupport();
-              },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  colors: [
+                    ColorManager.blue.withOpacity(0.08),
+                    ColorManager.blue.withOpacity(0.04),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.help_outline_rounded,
+                    color: ColorManager.blue,
+                    size: 40,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'كيف يمكننا مساعدتك؟',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'شكرًا لاستخدامكم متجرنا الإلكتروني للأجهزة الطبية. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل معنا.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
+                      height: 1.5,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 15),
-            ContactUsButton(
-              icon: Icons.call_outlined,
-              text: 'مكالمة',
-              onPressed: () {
-                context.read<ProfileController>().callSupport();
-              },
+          ),
+          const SizedBox(height: 28),
+          Text(
+            'اختر وسيلة التواصل',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 15),
-            ContactUsButton(
-              icon: Icons.email_outlined,
-              text: 'تواصل عبر الإيميل',
-              onPressed: () {
-                context.read<ProfileController>().emailSupport();
-              },
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          ContactUsButton(
+            icon: Icons.chat_bubble_outline,
+            text: 'رسالة واتساب',
+            subtitle: 'الرد السريع والفوري',
+            onPressed: () {
+              context.read<ProfileController>().whatsappSupport();
+            },
+          ),
+          const SizedBox(height: 12),
+          ContactUsButton(
+            icon: Icons.call_outlined,
+            text: 'مكالمة هاتفية',
+            subtitle: 'تحدث مباشرة معنا',
+            onPressed: () {
+              context.read<ProfileController>().callSupport();
+            },
+          ),
+          const SizedBox(height: 12),
+          ContactUsButton(
+            icon: Icons.email_outlined,
+            text: 'تواصل عبر الإيميل',
+            subtitle: 'احصل على إجابة مفصلة',
+            onPressed: () {
+              context.read<ProfileController>().emailSupport();
+            },
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
@@ -59,29 +113,78 @@ class ContactUsButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     required this.text,
+    this.subtitle,
   });
   final IconData icon;
   final String text;
+  final String? subtitle;
   final void Function()? onPressed;
+
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Icon(
-        icon,
-        color: Colors.black,
-      ),
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-          alignment: Alignment.centerRight,
-          elevation: 0,
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          )),
-      label: Text(
-        text,
-        textAlign: TextAlign.right,
-        style: context.h1.copyWith(fontSize: 17),
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: Colors.white,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(14),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorManager.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: ColorManager.blue, size: 26),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          text,
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                        ),
+                        if (subtitle != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            subtitle!,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Colors.grey.shade600,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.grey.withOpacity(0.4),
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

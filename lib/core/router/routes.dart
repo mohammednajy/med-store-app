@@ -14,7 +14,9 @@ import '../../modules/category/view/devices_view.dart';
 import '../../modules/home/model/device_model.dart';
 import '../../modules/onboarding/controller/onboarding_controller.dart';
 import '../../modules/onboarding/view/onboarding_view.dart';
+import '../../modules/order/model/order_model.dart';
 import '../../modules/order/view/cart_view.dart';
+import '../../modules/order/view/order_details_view.dart';
 import '../../modules/profile/view/FAQ_view.dart';
 import '../../modules/profile/view/about_app_view.dart';
 import '../../modules/profile/view/contactUs_view.dart';
@@ -82,6 +84,13 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => const CartView(),
             settings: const RouteSettings(name: RouteName.cartView));
+
+      case RouteName.orderDetailsView:
+        return MaterialPageRoute(
+            builder: (_) => OrderDetailsView(
+                  order: settings.arguments as OrderModel,
+                ),
+            settings: const RouteSettings(name: RouteName.orderDetailsView));
 
       case RouteName.contactUsView:
         return MaterialPageRoute(

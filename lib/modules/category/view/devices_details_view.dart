@@ -34,166 +34,352 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(title: widget.deviceModel.name),
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Column(
         children: [
           Expanded(
             child: ListView(
+              physics: const BouncingScrollPhysics(),
               children: [
-                SizedBox(
-                  height: 230,
+                // Clean Product Image Section
+                Container(
+                  // margin: const EdgeInsets.all(16),
+                  height: 300,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: NetworkCustomImageWidget(
-                    height: 230,
+                    height: 300,
                     imageUrl: widget.deviceModel.image,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.fill,
                   ),
                 ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                // Product Details Card
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.deviceModel.name, style: context.h1),
                       Text(
-                        '${widget.deviceModel.price} \$',
-                        style: context.h1.copyWith(color: ColorManager.blue),
+                        widget.deviceModel.name,
+                        style: context.h1.copyWith(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
+                      const SizedBox(height: 12),
+                      // Price Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorManager.blue.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '\$${widget.deviceModel.price}',
+                          style: context.h1.copyWith(
+                            color: ColorManager.blue,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Divider
+                      Container(height: 1, color: Colors.grey.shade200),
+                      const SizedBox(height: 16),
+                      // Description Label
+                      Text(
+                        'المواصفات والوصف',
+                        style: context.h1.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Description Text
                       Text(
                         widget.deviceModel.details,
                         style: context.b1.copyWith(
-                          color: Colors.black,
-                          fontSize: 18,
+                          color: Colors.grey.shade600,
+                          fontSize: 15,
+                          height: 1.8,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 24),
+                // Related Products Section
                 Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: Text(
-                    'منتجات ذات صلة',
-                    style: context.h1.copyWith(fontSize: 20),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Consumer<CategoryController>(
-                  builder: (context, categoryController, child) {
-                    return SizedBox(
-                      height: 190,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.only(right: 20),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 10),
-                        itemBuilder: (context, index) {
-                          if (categoryController.lastAddedDevices.status ==
-                              Status.COMPLETED) {
-                            final device = categoryController
-                                .lastAddedDevices
-                                .data![index];
-                            return InkWell(
-                              onTap: () {
-                                NavigationManager.pushNamedReplacement(
-                                  RouteName.devicesDetailsView,
-                                  arguments: device,
-                                );
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'منتجات ذات صلة',
+                        style: context.h1.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Consumer<CategoryController>(
+                        builder: (context, categoryController, child) {
+                          return SizedBox(
+                            height: 240,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 5,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                if (categoryController
+                                        .lastAddedDevices
+                                        .status ==
+                                    Status.COMPLETED) {
+                                  final device = categoryController
+                                      .lastAddedDevices
+                                      .data![index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      NavigationManager.pushNamedReplacement(
+                                        RouteName.devicesDetailsView,
+                                        arguments: device,
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 160,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.06,
+                                            ),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 140,
+                                            width: 160,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                    topLeft: Radius.circular(
+                                                      16,
+                                                    ),
+                                                    topRight: Radius.circular(
+                                                      16,
+                                                    ),
+                                                  ),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                    topLeft: Radius.circular(
+                                                      16,
+                                                    ),
+                                                    topRight: Radius.circular(
+                                                      16,
+                                                    ),
+                                                  ),
+                                              child: NetworkCustomImageWidget(
+                                                height: 140,
+                                                imageUrl: device.image,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(12),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    device.name,
+                                                    style: context.b1.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: ColorManager.blue
+                                                          .withOpacity(0.12),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            6,
+                                                          ),
+                                                    ),
+                                                    child: Text(
+                                                      '\$${device.price}',
+                                                      style: context.b1
+                                                          .copyWith(
+                                                            color: ColorManager
+                                                                .blue,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                } else if (categoryController
+                                        .lastAddedDevices
+                                        .status ==
+                                    Status.ERROR) {
+                                  return Container(
+                                    width: 160,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red.withOpacity(0.5),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade200,
+                                    highlightColor: Colors.grey.shade100,
+                                    child: Container(
+                                      width: 160,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                  );
+                                }
                               },
-                              child: Column(
-                                children: [
-                                  Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    height: 130,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: NetworkCustomImageWidget(
-                                      height: 120,
-                                      imageUrl: device.image,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    device.name,
-                                    style: context.b1.copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    'USD ${device.price}',
-                                    style: context.b1.copyWith(
-                                      color: ColorManager.blue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else if (categoryController
-                                  .lastAddedDevices
-                                  .status ==
-                              Status.ERROR) {
-                            return const Icon(Icons.error, size: 50);
-                          } else {
-                            return Shimmer.fromColors(
-                              baseColor: Colors.grey.shade300,
-                              highlightColor: Colors.grey.shade100,
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 130,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    height: 16,
-                                    width: 100,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Container(
-                                    height: 16,
-                                    width: 60,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<CategoryController>().addToCart(
-                  widget.deviceModel,
-                );
-                context.read<OrderController>().getCartDevices();
-              },
-              child: const Text(
-                'اضافة للسلة',
-                style: TextStyle(color: Colors.white),
+          // Add to Cart Button - Fixed at Bottom
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManager.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 4,
+                ),
+                onPressed: () {
+                  context.read<CategoryController>().addToCart(
+                    widget.deviceModel,
+                  );
+                  context.read<OrderController>().getCartDevices().then((
+                    value,
+                  ) {
+                    NavigationManager.pop();
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.add_shopping_cart_outlined,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'اضافة للسلة',
+                      style: context.h1.copyWith(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 40),
         ],
       ),
     );

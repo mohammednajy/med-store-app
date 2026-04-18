@@ -14,7 +14,7 @@ class OrderController extends ChangeNotifier {
   FirebaseResponse<List<OrderModel>> activeOrder = FirebaseResponse.init();
   FirebaseResponse<List<OrderModel>> completedOrder = FirebaseResponse.init();
 
-  getCartDevices() async {
+  Future<void> getCartDevices() async {
     try {
       cart = FirebaseResponse.loading('loading');
       notifyListeners();
@@ -45,7 +45,7 @@ class OrderController extends ChangeNotifier {
     }).onError((error, stackTrace) => showSnackBarCustom(text: 'لم يتم الحذف'));
   }
 
-  completeOrder({required String address, required String mobile}) async {
+  Future<void> completeOrder({required String address, required String mobile}) async {
     try {
       cart.data!.map((e) {
         getIt<FirebaseService>().firestore.collection('order').add({

@@ -5,9 +5,7 @@ import '../../../../core/utils/extentions.dart';
 import '../../../../core/utils/color_manager.dart';
 
 class PersonalCardInfo extends StatefulWidget {
-  const PersonalCardInfo({
-    Key? key,
-  }) : super(key: key);
+  const PersonalCardInfo({Key? key}) : super(key: key);
 
   @override
   State<PersonalCardInfo> createState() => _PersonalCardInfoState();
@@ -21,38 +19,68 @@ class _PersonalCardInfoState extends State<PersonalCardInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.person,
-            size: 60,
-            color: ColorManager.blue,
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          gradient: LinearGradient(
+            colors: [ColorManager.blue.withOpacity(0.1), Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const SizedBox(
-            width: 15,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                SharedPrefController().getUser().name,
-                style: context.h1.copyWith(fontSize: 20),
+        ),
+        child: Row(
+          children: [
+            // Avatar
+            Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.blue.withOpacity(0.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorManager.blue.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              Text(
-                SharedPrefController().getUser().email,
-                style: context.b1.copyWith(
-                  fontSize: 13,
-                ),
+              child: const Icon(
+                Icons.person,
+                size: 30,
+                color: ColorManager.blue,
               ),
-            ],
-          )
-        ],
+            ),
+            const SizedBox(width: 16),
+            // User Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    SharedPrefController().getUser().name,
+                    style: context.h1.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    SharedPrefController().getUser().email,
+                    style: context.b1.copyWith(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medical_devices_app/core/widgets/netwrok_image_widget.dart';
+import '../../../core/router/router.dart';
+import '../../../core/router/routers_name.dart';
 import '../../../core/services/remote_services/base_model.dart';
 import '../../../core/utils/color_manager.dart';
 import '../../../core/utils/extentions.dart';
@@ -30,69 +32,173 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
         if (orderController.activeOrder.status == Status.COMPLETED) {
           if (orderController.activeOrder.data!.isEmpty) {
             return Center(
-              child: Text(
-                'لا يوجد طلبات قيد التنفيذ',
-                style: context.h1.copyWith(color: ColorManager.blue),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.assignment_turned_in_outlined,
+                    size: 80,
+                    color: ColorManager.blue.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'لا يوجد طلبات قيد التنفيذ',
+                    style: context.h1.copyWith(
+                      color: ColorManager.blue,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'جميع طلباتك تم استلامها',
+                    style: context.b1.copyWith(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             );
           }
           return ListView.separated(
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             itemCount: orderController.activeOrder.data!.length,
-            itemBuilder: (context, index) => Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    height: 75,
-                    width: 75,
-                    margin: const EdgeInsets.only(left: 15),
-                    clipBehavior: Clip.antiAlias,
+            itemBuilder: (context, index) {
+              final order = orderController.activeOrder.data![index];
+              return GestureDetector(
+                onTap: () {
+                  NavigationManager.pushNamed(
+                    RouteName.orderDetailsView,
+                    arguments: order,
+                  );
+                },
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey.shade300,
-                    ),
-                    child: NetworkCustomImageWidget(
-                      height: 75,
-                      imageUrl: orderController
-                          .activeOrder
-                          .data![index]
-                          .deviceModel
-                          .image,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        orderController
-                            .activeOrder
-                            .data![index]
-                            .deviceModel
-                            .name,
-                        style: context.h1.copyWith(fontSize: 17),
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.grey.shade50],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      Text(
-                        '${orderController.activeOrder.data![index].deviceModel.price} \$',
-                        style: context.b1.copyWith(
-                          color: ColorManager.blue,
-                          fontSize: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        // Product Image
+                        Container(
+                          height: 100,
+                          width: 100,
+                          margin: const EdgeInsets.only(left: 12),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.grey.shade300,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: NetworkCustomImageWidget(
+                            height: 100,
+                            imageUrl: order.deviceModel.image,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    ],
+                        // Product Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                order.deviceModel.name,
+                                style: context.h1.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorManager.blue.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '\$${order.deviceModel.price}',
+                                  style: context.b1.copyWith(
+                                    color: ColorManager.blue,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Order Status Badge
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'قيد التنفيذ',
+                                  style: context.b1.copyWith(
+                                    color: Colors.orange.shade700,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         } else if (orderController.activeOrder.status == Status.ERROR) {
-          return const Text('something went wrong');
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 80,
+                  color: Colors.red.withOpacity(0.3),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'حدث خطأ',
+                  style: context.h1.copyWith(color: Colors.red, fontSize: 20),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'فشل تحميل الطلبات',
+                  style: context.b1.copyWith(color: Colors.grey, fontSize: 14),
+                ),
+              ],
+            ),
+          );
         } else {
           return loading();
         }
