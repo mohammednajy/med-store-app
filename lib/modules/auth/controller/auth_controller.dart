@@ -14,11 +14,11 @@ class AuthController extends ChangeNotifier {
   Future<void> register(UserModel user) async {
     loadingWithText();
     try {
-      UserCredential credential =
-          await getIt<FirebaseService>().auth.createUserWithEmailAndPassword(
-                email: user.email,
-                password: user.password,
-              );
+      UserCredential credential = await getIt<FirebaseService>().auth
+          .createUserWithEmailAndPassword(
+            email: user.email,
+            password: user.password,
+          );
       if (credential.user != null) {
         createUser(user);
         NavigationManager.goToAndRemove(RouteName.login);
@@ -35,21 +35,16 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     loadingWithText();
     try {
-      UserCredential credential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       if (credential.user != null) {
         // this is for update the user password inside firestore database after change it form forget password screen
         await updateUser(email, password);
         SharedPrefController().isLoggedIn(value: true);
+        SharedPrefController().setGuestUser(value: false);
         NavigationManager.goToAndRemove(RouteName.mainAppView);
         showSnackBarCustom(
           text: 'تم تسجيل الدخول بنجاح',
@@ -78,19 +73,17 @@ class AuthController extends ChangeNotifier {
 
   Future<void> updateUser(String email, String password) async {
     try {
-      final id = await getIt<FirebaseService>()
-          .firestore
+      final id = await getIt<FirebaseService>().firestore
           .collection('users')
           .where('email', isEqualTo: email)
           .get()
           .then((value) => value.docs.first.id);
 
-      await getIt<FirebaseService>()
-          .firestore
+      await getIt<FirebaseService>().firestore
           .collection('users')
           .doc(id)
-          .update({'password': password}).then(
-              (value) => saveUser(email: email, password: password));
+          .update({'password': password})
+          .then((value) => saveUser(email: email, password: password));
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
@@ -118,15 +111,15 @@ class AuthController extends ChangeNotifier {
   }
 
   saveUser({required String email, required String password}) async {
-    await getIt<FirebaseService>()
-        .firestore
+    await getIt<FirebaseService>().firestore
         .collection('users')
         .where('email', isEqualTo: email)
         .where('password', isEqualTo: password)
         .get()
         .then(
-          (value) => SharedPrefController()
-              .save(UserModel.fromSnapshot(value.docs.first)),
+          (value) => SharedPrefController().save(
+            UserModel.fromSnapshot(value.docs.first),
+          ),
         )
         .onError((error, stackTrace) => print(error))
         .catchError((e) => print(e));

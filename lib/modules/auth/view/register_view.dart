@@ -219,7 +219,7 @@ class _RegisterForm extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                  ),
+                  ),// 
                   child: const Text(
                     'تسجيل مستخدم جديد',
                     style: TextStyle(color: Colors.white),

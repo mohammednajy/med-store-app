@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../core/router/router.dart';
 import '../../../core/services/remote_services/base_model.dart';
@@ -18,14 +19,15 @@ class OrderController extends ChangeNotifier {
     try {
       cart = FirebaseResponse.loading('loading');
       notifyListeners();
-      final snapshot = await getIt<FirebaseService>()
-          .firestore
+      final snapshot = await getIt<FirebaseService>().firestore
           .collection('cart')
           .where('userID', isEqualTo: SharedPrefController().getUser().userId)
           .get();
-      cart = FirebaseResponse.completed(snapshot.docs.map((element) {
-        return CartModel.fromSnapshot(element);
-      }).toList());
+      cart = FirebaseResponse.completed(
+        snapshot.docs.map((element) {
+          return CartModel.fromSnapshot(element);
+        }).toList(),
+      );
       notifyListeners();
     } on Exception {
       cart = FirebaseResponse.error('something went wrong');
@@ -34,88 +36,124 @@ class OrderController extends ChangeNotifier {
   }
 
   deleteOrder(String id) async {
-    await getIt<FirebaseService>()
-        .firestore
+    await getIt<FirebaseService>().firestore
         .collection('cart')
         .doc(id)
         .delete()
         .then((value) {
-      getCartDevices();
-      showSnackBarCustom(text: 'تم الحذف بنجاح');
-    }).onError((error, stackTrace) => showSnackBarCustom(text: 'لم يتم الحذف'));
+          getCartDevices();
+          showSnackBarCustom(text: 'تم الحذف بنجاح');
+        })
+        .onError(
+          (error, stackTrace) => showSnackBarCustom(text: 'لم يتم الحذف'),
+        );
   }
 
-  Future<void> completeOrder({required String address, required String mobile}) async {
+  Future<void> completeOrder({
+    required String address,
+    required String mobile,
+  }) async {
     try {
-      cart.data!.map((e) {
-        getIt<FirebaseService>().firestore.collection('order').add({
-          "status": "0",
-          "info": {"phone": mobile, "address": address},
-          ...e.toJson(),
-        });
-      }).toList();
+      final devicesList = cart.data!.map((e) => e.toJson()).toList();
+
+      await getIt<FirebaseService>().firestore.collection('order').add({
+        "status": "pending",
+        "info": {"phone": mobile, "address": address},
+        "devices": devicesList, // ✅ all items in one order
+        "createdAt": FieldValue.serverTimestamp(),
+        "userID": SharedPrefController().getUser().userId,
+      });
+
       clearCart();
       getCartDevices();
+
       showSnackBarCustom(
         text: 'تم الاضافة بنجاح لقائمة الطلبات',
         backgroundColor: Colors.green,
       );
+
       NavigationManager.mayPop();
-    } on Exception catch (e) {
+    } catch (e) {
       debugPrint(e.toString());
     }
   }
 
   clearCart() async {
     cart.data!
-        .map((e) async => await getIt<FirebaseService>()
-            .firestore
-            .collection('cart')
-            .doc(e.cartId)
-            .delete())
+        .map(
+          (e) async => await getIt<FirebaseService>().firestore
+              .collection('cart')
+              .doc(e.cartId)
+              .delete(),
+        )
         .toList();
     notifyListeners();
   }
 
-  getActiveOrder() async {
+  Future<void> getActiveOrder() async {
     activeOrder = FirebaseResponse.loading('loading');
     notifyListeners();
+
     try {
-      List<OrderModel> value = await getIt<FirebaseService>()
-          .firestore
+      final snapshot = await getIt<FirebaseService>().firestore
           .collection('order')
           .where('userID', isEqualTo: SharedPrefController().getUser().userId)
-          .where('status', isEqualTo: "0")
-          .get()
-          .then((value) {
-        return value.docs.map((e) => OrderModel.fromSnapshot(e)).toList();
-      });
-      activeOrder = FirebaseResponse.completed(value);
-      notifyListeners();
-    } on Exception catch (e) {
+          .where('status', isEqualTo: "pending")
+          .get();
+
+      final orders = snapshot.docs
+          .map((e) => OrderModel.fromSnapshot(e))
+          .toList();
+
+      activeOrder = FirebaseResponse.completed(orders);
+    } catch (e) {
       activeOrder = FirebaseResponse.error(e.toString());
-      notifyListeners();
     }
+
+    notifyListeners();
   }
 
-  getCompletedOrder() async {
+  Future<void> getCompletedOrder() async {
     completedOrder = FirebaseResponse.loading('loading');
     notifyListeners();
+
     try {
-      List<OrderModel> value = await getIt<FirebaseService>()
-          .firestore
+      final snapshot = await getIt<FirebaseService>().firestore
           .collection('order')
           .where('userID', isEqualTo: SharedPrefController().getUser().userId)
-          .where('status', isEqualTo: "1")
-          .get()
-          .then((value) {
-        return value.docs.map((e) => OrderModel.fromSnapshot(e)).toList();
-      });
-      completedOrder = FirebaseResponse.completed(value);
-      notifyListeners();
-    } on Exception catch (e) {
+          .where('status', isEqualTo: "completed")
+          .get();
+
+      final orders = snapshot.docs
+          .map((e) => OrderModel.fromSnapshot(e))
+          .toList();
+
+      completedOrder = FirebaseResponse.completed(orders);
+    } catch (e) {
       completedOrder = FirebaseResponse.error(e.toString());
-      notifyListeners();
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> cancelOrder(String orderId) async {
+    try {
+      await getIt<FirebaseService>().firestore
+          .collection('order')
+          .doc(orderId)
+          .update({"status": "canceled"});
+
+      // refresh lists
+      await getActiveOrder();
+
+      showSnackBarCustom(
+        text: 'تم إلغاء الطلب بنجاح',
+        backgroundColor: Colors.red,
+      );
+      NavigationManager.mayPop();
+    } catch (e) {
+      debugPrint(e.toString());
+      showSnackBarCustom(text: 'فشل إلغاء الطلب');
     }
   }
 }

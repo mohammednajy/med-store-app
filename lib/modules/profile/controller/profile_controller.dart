@@ -18,6 +18,7 @@ class ProfileController extends ChangeNotifier {
   logOut() async {
     await getIt<FirebaseService>().auth.signOut();
     SharedPrefController().isLoggedIn(value: false);
+    SharedPrefController().setGuestUser(value: false);
     SharedPrefController().remove();
     NavigationManager.goToAndRemove(RouteName.login);
   }

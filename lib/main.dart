@@ -48,7 +48,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeManager.lightTheme,
       initialRoute: SharedPrefController().getOnBoarding()
-          ? SharedPrefController().getLoggedIn()
+          ? (SharedPrefController().getLoggedIn() ||
+                    SharedPrefController().getGuestUser())
                 ? RouteName.mainAppView
                 : RouteName.auth
           : RouteName.onboarding,

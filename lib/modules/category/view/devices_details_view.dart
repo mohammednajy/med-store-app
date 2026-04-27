@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical_devices_app/core/services/local_services/shared_perf.dart';
 import 'package:medical_devices_app/core/widgets/netwrok_image_widget.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/router/router.dart';
@@ -350,14 +351,18 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
                   elevation: 4,
                 ),
                 onPressed: () {
-                  context.read<CategoryController>().addToCart(
-                    widget.deviceModel,
-                  );
-                  context.read<OrderController>().getCartDevices().then((
-                    value,
-                  ) {
-                    NavigationManager.pop();
-                  });
+                  if (SharedPrefController().getLoggedIn()) {
+                    context.read<CategoryController>().addToCart(
+                      widget.deviceModel,
+                    );
+                    context.read<OrderController>().getCartDevices().then((
+                      value,
+                    ) {
+                      NavigationManager.pop();
+                    });
+                  } else {
+                    NavigationManager.pushNamed(RouteName.auth);
+                  }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

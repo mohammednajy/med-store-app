@@ -1,16 +1,10 @@
-
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../modules/auth/models/user_model.dart';
 
-
-enum PrefKeys {
-  user,
-  isLoggedIn,
-  onBoarding,
-}
+enum PrefKeys { user, isLoggedIn, onBoarding, guestUser }
 
 class SharedPrefController {
   static final _instance = SharedPrefController._();
@@ -28,10 +22,7 @@ class SharedPrefController {
 
   save(UserModel user) async {
     String userEncoded = jsonEncode(user.toJsonUser());
-    await preferences.setString(
-      PrefKeys.user.toString(),
-      userEncoded,
-    );
+    await preferences.setString(PrefKeys.user.toString(), userEncoded);
   }
 
   UserModel getUser() {
@@ -40,7 +31,7 @@ class SharedPrefController {
     return UserModel.fromJson(userObject);
   }
 
-  isLoggedIn({required bool value}) {
+  void isLoggedIn({required bool value}) {
     preferences.setBool(PrefKeys.isLoggedIn.toString(), value);
   }
 
@@ -48,8 +39,16 @@ class SharedPrefController {
     return preferences.getBool(PrefKeys.isLoggedIn.toString()) ?? false;
   }
 
-  setOnBoarding({required bool value}) {
+  void setOnBoarding({required bool value}) {
     preferences.setBool(PrefKeys.onBoarding.toString(), value);
+  }
+
+  void setGuestUser({required bool value}) {
+    preferences.setBool(PrefKeys.guestUser.toString(), value);
+  }
+
+  bool getGuestUser() {
+    return preferences.getBool(PrefKeys.guestUser.toString()) ?? false;
   }
 
   bool getOnBoarding() {

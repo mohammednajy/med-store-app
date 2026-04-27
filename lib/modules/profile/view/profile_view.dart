@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical_devices_app/core/services/local_services/shared_perf.dart';
 import '../../../core/router/router.dart';
 import '../../../core/router/routers_name.dart';
 import '../../../core/widgets/appbar_custom.dart';
@@ -20,7 +21,52 @@ class ProfileView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
-          const PersonalCardInfo(),
+          SharedPrefController().getGuestUser() == true
+              ? Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.shade300,
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_outlined,
+                            color: Colors.orange.shade600,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'أنت تستخدم التطبيق كزائر، بعض الميزات قد تكون محدودة. قم بإنشاء حساب للاستمتاع بتجربة كاملة.',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.orange.shade800),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        NavigationManager.pushNamed(RouteName.auth);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text('تسجيل الدخول / إنشاء حساب'),
+                    ),
+                  ],
+                )
+              : const PersonalCardInfo(),
           const SizedBox(height: 24),
 
           // Settings Section
@@ -92,65 +138,68 @@ class ProfileView extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Logout Section
-          Card(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
+          Visibility(
+            visible: SharedPrefController().getLoggedIn() == true,
+            child: Card(
+              elevation: 1,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                color: Colors.white,
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    var value = await customDialogWidget(
-                      context,
-                      message: 'هل انت متأكد من تسجيل الخروج؟',
-                    );
-                    if (value == true) {
-                      context.read<ProfileController>().logOut();
-                    }
-                  },
+              child: Container(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () async {
+                      var value = await customDialogWidget(
+                        context,
+                        message: 'هل انت متأكد من تسجيل الخروج؟',
+                      );
+                      if (value == true) {
+                        context.read<ProfileController>().logOut();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.logout_outlined,
+                              color: Colors.red.shade600,
+                              size: 22,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.logout_outlined,
-                            color: Colors.red.shade600,
-                            size: 22,
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(
+                              'تسجيل الخروج',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.red.shade600,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Text(
-                            'تسجيل الخروج',
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(
-                                  color: Colors.red.shade600,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.red.withOpacity(0.4),
+                            size: 16,
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.red.withOpacity(0.4),
-                          size: 16,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
