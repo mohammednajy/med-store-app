@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medical_devices_app/core/services/local_services/shared_perf.dart';
 import 'package:medical_devices_app/core/widgets/netwrok_image_widget.dart';
+import 'package:medical_devices_app/modules/home/controller/favorite_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/router/router.dart';
 import '../../../core/router/routers_name.dart';
@@ -23,9 +24,14 @@ class DeviceDetailsView extends StatefulWidget {
 }
 
 class _DeviceDetailsViewState extends State<DeviceDetailsView> {
+  late int totalPrice;
+  late int quantity;
+
   @override
   void initState() {
     super.initState();
+    totalPrice = int.parse(widget.deviceModel.price);
+    quantity = 1;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context.read<CategoryController>().getLastAddedDevices();
     });
@@ -33,6 +39,8 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final favController = context.watch<FavoriteController>();
+    final isFav = favController.isFavorite(widget.deviceModel.deviceId);
     return Scaffold(
       appBar: AppBarCustom(title: widget.deviceModel.name),
       backgroundColor: const Color(0xFFF8F9FA),
@@ -43,29 +51,54 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
               physics: const BouncingScrollPhysics(),
               children: [
                 // Clean Product Image Section
-                Container(
-                  // margin: const EdgeInsets.all(16),
-                  height: 300,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
+                Stack(
+                  alignment: AlignmentGeometry.topLeft,
+                  children: [
+                    Container(
+                      // margin: const EdgeInsets.all(16),
+                      height: 300,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: NetworkCustomImageWidget(
-                    height: 300,
-                    imageUrl: widget.deviceModel.image,
-                    fit: BoxFit.fill,
-                  ),
+                      child: NetworkCustomImageWidget(
+                        height: 300,
+                        imageUrl: widget.deviceModel.image,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: IconButton(
+                        onPressed: () {
+                          context.read<FavoriteController>().toggleFavorite(
+                            widget.deviceModel,
+                          );
+                        },
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        icon: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav ? Colors.red : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 // Product Details Card
                 Container(
@@ -342,46 +375,89 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
             child: SizedBox(
               width: double.infinity,
               height: 56,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorManager.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 4,
-                ),
-                onPressed: () {
-                  if (SharedPrefController().getLoggedIn()) {
-                    context.read<CategoryController>().addToCart(
-                      widget.deviceModel,
-                    );
-                    context.read<OrderController>().getCartDevices().then((
-                      value,
-                    ) {
-                      NavigationManager.pop();
-                    });
-                  } else {
-                    NavigationManager.pushNamed(RouteName.auth);
-                  }
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.add_shopping_cart_outlined,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'اضافة للسلة',
-                      style: context.h1.copyWith(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorManager.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 4,
+                      ),
+                      onPressed: () {
+                        if (SharedPrefController().getLoggedIn()) {
+                          context.read<CategoryController>().addToCart(
+                            widget.deviceModel,
+                            quantity,
+                          );
+                          context.read<OrderController>().getCartDevices().then(
+                            (value) {
+                              NavigationManager.pop();
+                            },
+                          );
+                        } else {
+                          NavigationManager.pushNamed(RouteName.auth);
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.add_shopping_cart_outlined,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'اضافة للسلة',
+                            style: context.h1.copyWith(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: IconButton(
+                          onPressed: () {
+                            if (quantity == 1) {
+                              return;
+                            }
+                            --quantity;
+                            totalPrice =
+                                quantity * int.parse(widget.deviceModel.price);
+                            setState(() {});
+                          },
+                          icon: Icon(Icons.remove),
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          totalPrice.toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Flexible(
+                        child: IconButton(
+                          onPressed: () {
+                            ++quantity;
+                            totalPrice =
+                                quantity * int.parse(widget.deviceModel.price);
+                            setState(() {});
+                          },
+                          icon: Icon(Icons.add),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

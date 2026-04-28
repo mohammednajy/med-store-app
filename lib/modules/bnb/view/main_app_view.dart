@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical_devices_app/modules/home/view/favorite_screen.dart';
 import '../../../core/utils/color_manager.dart';
 import '../controller/bnb_controller.dart';
 import '../model/bnb_model.dart';
@@ -17,51 +18,66 @@ class MainAppView extends StatelessWidget {
     final bnbProvider = context.watch<BnbController>();
     return Scaffold(
       body: taps[bnbProvider.selectedTabIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, -4),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.all(Radius.circular(50)),
+        ),
+        onPressed: () {
+          context.read<BnbController>().changeIndex(4);
+        },
+        child: Icon(Icons.favorite),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(), // 👈 THIS is what you want
+        notchMargin: 6,
+        elevation: 10,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildItem(context, 0, Icons.home, bnbContent[0].text),
+              _buildItem(context, 1, Icons.category, bnbContent[1].text),
+
+              const SizedBox(width: 40), // 👈 space for FAB
+
+              _buildItem(context, 2, Icons.receipt, bnbContent[2].text),
+              _buildItem(context, 3, Icons.person, bnbContent[3].text),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItem(
+    BuildContext context,
+    int index,
+    IconData icon,
+    String label,
+  ) {
+    final provider = context.watch<BnbController>();
+    final isSelected = provider.selectedTabIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        context.read<BnbController>().changeIndex(index);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: isSelected ? ColorManager.blue : Colors.grey),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? ColorManager.blue : Colors.grey,
             ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          onTap: (value) {
-            context.read<BnbController>().changeIndex(value);
-          },
-          currentIndex: bnbProvider.selectedTabIndex,
-          selectedItemColor: ColorManager.blue,
-          unselectedItemColor: Colors.grey.shade500,
-          selectedLabelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: ColorManager.blue,
           ),
-          unselectedLabelStyle: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade500,
-              ),
-          selectedIconTheme: const IconThemeData(
-            color: ColorManager.blue,
-            size: 28,
-          ),
-          unselectedIconTheme: IconThemeData(
-            color: Colors.grey.shade500,
-            size: 24,
-          ),
-          items: bnbContent
-              .map(
-                (e) =>
-                    BottomNavigationBarItem(icon: Icon(e.icon), label: e.text),
-              )
-              .toList(),
-        ),
+        ],
       ),
     );
   }
@@ -72,4 +88,5 @@ List<Widget> taps = [
   const CategoryView(),
   const OrdersScreen(),
   const ProfileView(),
+  const FavoriteScreen(),
 ];

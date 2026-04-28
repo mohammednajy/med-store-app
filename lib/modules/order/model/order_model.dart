@@ -1,5 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:medical_devices_app/modules/home/model/device_model.dart';
 
 class OrderModel {
@@ -10,7 +11,7 @@ class OrderModel {
   final String status;
   final DateTime? createdAt;
 
-  final List<DeviceModel> devices; // ✅ changed
+  final List<OrderItem> devices; // ✅ changed
 
   OrderModel({
     required this.orderId,
@@ -34,8 +35,8 @@ class OrderModel {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       // ✅ map devices list correctly
       devices: (data['devices'] as List<dynamic>? ?? []).map((e) {
-        final product = e['product']; // because structure has "product"
-        return DeviceModel.fromJson(product);
+        // final product = e['product']; // because structure has "product"
+        return OrderItem.fromJson(e);
       }).toList(),
     );
   }
@@ -53,5 +54,19 @@ OrderModel(
   createdAt: $createdAt
 )
 ''';
+  }
+}
+
+class OrderItem {
+  final DeviceModel deviceModel;
+  final int count;
+
+  OrderItem({required this.deviceModel, required this.count});
+
+  factory OrderItem.fromJson(Map<String, dynamic> map) {
+    return OrderItem(
+      deviceModel: DeviceModel.fromJson(map['product'] as Map<String, dynamic>),
+      count: map['count'] as int,
+    );
   }
 }

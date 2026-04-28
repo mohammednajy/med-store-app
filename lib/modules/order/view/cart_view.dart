@@ -128,11 +128,7 @@ class _CartViewState extends State<CartView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    orderController
-                                        .cart
-                                        .data![index]
-                                        .device
-                                        .name,
+                                    "${orderController.cart.data![index].device.name} ${orderController.cart.data![index].count}x",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: context.h1.copyWith(
@@ -236,7 +232,7 @@ class _CartViewState extends State<CartView> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      '${orderController.cart.data!.length}',
+                                      '${orderController.cart.data!.fold(0, (sum, product) => sum + product.count)}',
                                       style: context.h1.copyWith(
                                         fontSize: 18,
                                         color: ColorManager.blue,
@@ -261,7 +257,7 @@ class _CartViewState extends State<CartView> {
                                     ),
                                   ),
                                   Text(
-                                    '\$${orderController.cart.data!.fold(0, (sum, product) => sum + int.parse(product.device.price))}',
+                                    '\$${orderController.cart.data!.fold(0, (sum, product) => sum + (product.count * int.parse(product.device.price)))}',
                                     style: context.h1.copyWith(
                                       fontSize: 20,
                                       color: ColorManager.blue,

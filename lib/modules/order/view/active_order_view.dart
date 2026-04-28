@@ -127,7 +127,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                         : null;
                     final totalPrice = order.devices.fold<double>(
                       0,
-                      (sum, item) => sum + double.parse(item.price),
+                      (sum, item) => sum + (double.parse(item.deviceModel.price) * item.count),
                     );
                     // final order = orderController.activeOrder.data![index];
                     return GestureDetector(
@@ -173,7 +173,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                                 ),
                                 child: NetworkCustomImageWidget(
                                   height: 100,
-                                  imageUrl: firstDevice?.image ?? '',
+                                  imageUrl: firstDevice?.deviceModel.image ?? '',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -185,8 +185,8 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                                     Text(
                                       firstDevice != null
                                           ? (order.devices.length > 1
-                                                ? '${firstDevice.name} + ${order.devices.length - 1} منتجات أخرى'
-                                                : firstDevice.name)
+                                                ? '${firstDevice.deviceModel.name} + ${order.devices.length - 1} منتجات أخرى'
+                                                : firstDevice.deviceModel.name)
                                           : 'طلب بدون منتجات',
                                       style: context.h1.copyWith(
                                         fontSize: 16,

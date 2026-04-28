@@ -5,17 +5,28 @@ class CartModel {
   final String userId;
   final DeviceModel device;
   final String cartId;
-
-  CartModel({required this.device, required this.userId, required this.cartId});
+  final int count;
+  CartModel({
+    required this.device,
+    required this.userId,
+    required this.cartId,
+    required this.count,
+  });
 
   factory CartModel.fromSnapshot(QueryDocumentSnapshot snapshot) {
     return CartModel(
-        cartId: snapshot.id,
-        device: DeviceModel.fromJson(snapshot['product']),
-        userId: snapshot['userID']);
+      cartId: snapshot.id,
+      count: snapshot['count'],
+      device: DeviceModel.fromJson(snapshot['product']),
+      userId: snapshot['userID'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{'userID': userId, 'product': device.toJson()};
+    return <String, dynamic>{
+      'userID': userId,
+      'product': device.toJson(),
+      'count': count,
+    };
   }
 }

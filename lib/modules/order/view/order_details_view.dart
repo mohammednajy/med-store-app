@@ -76,7 +76,7 @@ class OrderDetailsView extends StatelessWidget {
                                           color: Colors.grey.shade200,
                                         ),
                                         child: NetworkCustomImageWidget(
-                                          imageUrl: device.image,
+                                          imageUrl: device.deviceModel.image,
                                           height: 70,
                                           fit: BoxFit.cover,
                                         ),
@@ -89,7 +89,7 @@ class OrderDetailsView extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              device.name,
+                                              "${device.deviceModel.name} ${device.count}x",
                                               style: context.h1.copyWith(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
@@ -97,7 +97,7 @@ class OrderDetailsView extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 6),
                                             Text(
-                                              '\$${device.price}',
+                                              '\$${device.deviceModel.price}',
                                               style: context.b1.copyWith(
                                                 color: ColorManager.blue,
                                                 fontWeight: FontWeight.bold,
@@ -229,14 +229,14 @@ class OrderDetailsView extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      value.name,
+                                      "${value.deviceModel.name} ${value.count}x",
                                       style: context.b1.copyWith(
                                         fontSize: 16,
                                         color: Colors.grey.shade700,
                                       ),
                                     ),
                                     Text(
-                                      '\$${value.price}',
+                                      '\$${value.deviceModel.price}',
                                       style: context.b1.copyWith(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
@@ -275,7 +275,7 @@ class OrderDetailsView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  '\$${order.devices.fold(0, (sum, device) => sum + (int.parse(device.price))).toStringAsFixed(2)}',
+                                  '\$${order.devices.fold(0, (sum, device) => sum + (int.parse(device.deviceModel.price) * device.count)).toStringAsFixed(2)}',
                                   style: context.h1.copyWith(
                                     color: ColorManager.blue,
                                     fontSize: 18,
@@ -295,25 +295,31 @@ class OrderDetailsView extends StatelessWidget {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade600,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+          Visibility(
+            visible: order.status == 'pending',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 30,
               ),
-              onPressed: () {
-                context.read<OrderController>().cancelOrder(order.orderId);
-              },
-              child: Text(
-                'الغاء الطلب',
-                style: context.b1.copyWith(color: Colors.white),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade600,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  context.read<OrderController>().cancelOrder(order.orderId);
+                },
+                child: Text(
+                  'الغاء الطلب',
+                  style: context.b1.copyWith(color: Colors.white),
+                ),
               ),
             ),
           ),

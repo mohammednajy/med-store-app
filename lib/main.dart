@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:medical_devices_app/modules/home/controller/favorite_controller.dart';
 import 'core/router/router.dart';
 import 'core/router/routers_name.dart';
 import 'core/router/routes.dart';
@@ -30,6 +31,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => CategoryController()),
         ChangeNotifierProvider(create: (context) => HomeController()),
+        ChangeNotifierProvider(create: (context) => FavoriteController()),
         ChangeNotifierProvider(create: (context) => OrderController()),
         ChangeNotifierProvider(create: (context) => ProfileController()),
       ],

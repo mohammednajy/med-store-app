@@ -122,13 +122,15 @@ class _CompletedOrderedViewState extends State<CompletedOrderedView> {
                   itemCount: orderController.completedOrder.data!.length,
                   itemBuilder: (context, index) {
                     // final order = orderController.completedOrder.data![index];
-                    final order = orderController.activeOrder.data![index];
+                    final order = orderController.completedOrder.data![index];
                     final firstDevice = order.devices.isNotEmpty
                         ? order.devices.first
                         : null;
                     final totalPrice = order.devices.fold<double>(
                       0,
-                      (sum, item) => sum + double.parse(item.price),
+                      (sum, item) =>
+                          sum +
+                          (double.parse(item.deviceModel.price) * item.count),
                     );
                     return GestureDetector(
                       onTap: () {
@@ -173,7 +175,8 @@ class _CompletedOrderedViewState extends State<CompletedOrderedView> {
                                 ),
                                 child: NetworkCustomImageWidget(
                                   height: 100,
-                                  imageUrl: firstDevice?.image ?? '',
+                                  imageUrl:
+                                      firstDevice?.deviceModel.image ?? '',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -185,8 +188,8 @@ class _CompletedOrderedViewState extends State<CompletedOrderedView> {
                                     Text(
                                       firstDevice != null
                                           ? (order.devices.length > 1
-                                                ? '${firstDevice.name} + ${order.devices.length - 1} منتجات أخرى'
-                                                : firstDevice.name)
+                                                ? '${firstDevice.deviceModel.name} + ${order.devices.length - 1} منتجات أخرى'
+                                                : firstDevice.deviceModel.name)
                                           : 'طلب بدون منتجات',
                                       style: context.h1.copyWith(
                                         fontSize: 16,
