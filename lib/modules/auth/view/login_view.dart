@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medical_devices_app/core/services/local_services/shared_perf.dart';
 import '../../../core/utils/extentions.dart';
 import '../../../core/utils/validation.dart';
 import '../../../core/widgets/text_field_widget.dart';
@@ -206,26 +205,6 @@ class _FormCard extends StatelessWidget {
               child: const Text(
                 'تسجيل دخول',
                 style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: OutlinedButton(
-              onPressed: () {
-                SharedPrefController().setGuestUser(value: true);
-                NavigationManager.goToAndRemove(RouteName.mainAppView);
-              },
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text(
-                'الدخول كزائر',
-                style: TextStyle(color: ColorManager.blue, fontSize: 16),
               ),
             ),
           ),

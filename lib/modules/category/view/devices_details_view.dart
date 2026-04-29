@@ -410,7 +410,7 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            'اضافة للسلة',
+                            '${totalPrice.toString()} اضافة للسلة',
                             style: context.h1.copyWith(
                               color: Colors.white,
                               fontSize: 18,
@@ -440,7 +440,7 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
                       ),
                       Flexible(
                         child: Text(
-                          totalPrice.toString(),
+                          quantity.toString(),
                           style: TextStyle(fontSize: 16),
                         ),
                       ),

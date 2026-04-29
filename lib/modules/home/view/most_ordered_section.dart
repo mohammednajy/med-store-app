@@ -63,7 +63,7 @@ class MostOrderedSection extends StatelessWidget {
                               child: NetworkCustomImageWidget(
                                 height: 120,
                                 imageUrl: item.image,
-                                fit: BoxFit.fitHeight,
+                                fit: BoxFit.fill,
                               ),
                             ),
                             Padding(

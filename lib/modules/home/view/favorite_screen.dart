@@ -25,10 +25,17 @@ class FavoriteScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 spacing: 30,
                 children: [
-                  Icon(
-                    Icons.hourglass_empty,
-                    size: 40,
-                    color: ColorManager.blue,
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                      color: ColorManager.blue.withValues(alpha: 0.5),
+                    ),
+                    child: Icon(
+                      Icons.bookmark_border,
+                      size: 40,
+                      color: ColorManager.blue,
+                    ),
                   ),
                   Text('لا يوجد عناصر في المفضلة', style: context.h1),
                 ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical_devices_app/core/services/local_services/shared_perf.dart';
 import '../../../core/router/router.dart';
 import '../../../core/router/routers_name.dart';
 import '../../../core/utils/asset_path_manager.dart';
@@ -136,6 +137,28 @@ class _Actions extends StatelessWidget {
             ),
             child: const Text(
               'تسجيل الدخول',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton(
+            onPressed: () {
+              SharedPrefController().setGuestUser(value: true);
+              NavigationManager.goToAndRemove(RouteName.mainAppView);
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.white),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: const Text(
+              'الدخول كزائر',
               style: TextStyle(color: Colors.white),
             ),
           ),
