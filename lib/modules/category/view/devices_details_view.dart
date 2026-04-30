@@ -168,6 +168,63 @@ class _DeviceDetailsViewState extends State<DeviceDetailsView> {
                           height: 1.8,
                         ),
                       ),
+                      Text(
+                        'المميزات:',
+                        style: context.h1.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      ...widget.deviceModel.points.map(
+                        (value) => Text(
+                          "🔹 $value",
+                          style: context.b1.copyWith(
+                            color: Colors.grey.shade600,
+                            fontSize: 15,
+                            height: 1.8,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+                      Text(
+                        ' مناسب لـ',
+                        style: context.h1.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Description Text
+                      Text(
+                        widget.deviceModel.forUsage,
+                        style: context.b1.copyWith(
+                          color: Colors.grey.shade600,
+                          fontSize: 15,
+                          height: 1.8,
+                        ),
+                      ),
+
+                      Text(
+                        'ملاحظات',
+                        style: context.h1.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Description Text
+                      Text(
+                        widget.deviceModel.note,
+                        style: context.b1.copyWith(
+                          color: Colors.grey.shade600,
+                          fontSize: 15,
+                          height: 1.8,
+                        ),
+                      ),
                     ],
                   ),
                 ),

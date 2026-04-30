@@ -140,6 +140,7 @@ class RouteGenerator {
           builder: (_) => const FavoriteScreen(),
           settings: const RouteSettings(name: RouteName.favoriteView),
         );
+
       default:
         return unDefineRoute();
     }

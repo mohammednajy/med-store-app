@@ -7,6 +7,9 @@ class DeviceModel {
   final String price;
   final String details;
   final String deviceId;
+  final String forUsage;
+  final String note;
+  final List<String> points;
 
   DeviceModel({
     required this.name,
@@ -15,6 +18,9 @@ class DeviceModel {
     required this.details,
     required this.price,
     required this.deviceId,
+    required this.forUsage,
+    required this.note,
+    required this.points,
   });
 
   factory DeviceModel.fromSnapshot(QueryDocumentSnapshot snapshot) {
@@ -25,6 +31,9 @@ class DeviceModel {
       details: snapshot['details'],
       deviceId: snapshot.id,
       price: snapshot['price'],
+      note: snapshot['note'],
+      forUsage: snapshot['for'],
+      points: List<String>.from(snapshot['points'] as List),
     );
   }
 
@@ -36,6 +45,9 @@ class DeviceModel {
       details: map['details'],
       deviceId: map['deviceId'],
       price: map['price'],
+      note: map['note'],
+      forUsage: map['for'],
+      points: List<String>.from(map['points'] as List),
     );
   }
   Map<String, dynamic> toJson() {
@@ -46,6 +58,9 @@ class DeviceModel {
       'price': price,
       'details': details,
       'deviceId': deviceId,
+      'for': forUsage,
+      'note': note,
+      'points': points,
     };
   }
 

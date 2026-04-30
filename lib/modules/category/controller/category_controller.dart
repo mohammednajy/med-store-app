@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -67,26 +68,48 @@ class CategoryController extends ChangeNotifier {
   Future<FirebaseResponse> getLastAddedDevices() async {
     lastAddedDevices = FirebaseResponse.loading('loading');
     notifyListeners();
-    await getIt<FirebaseService>().firestore
-        .collection('lastAdded')
-        .get()
-        .then((QuerySnapshot value) {
-          lastAddedDevices = FirebaseResponse.completed(
-            value.docs.map((element) {
-              return DeviceModel.fromSnapshot(element);
-            }).toList(),
-          );
-          notifyListeners();
-        })
-        .onError((error, stackTrace) {
-          lastAddedDevices = FirebaseResponse.error(error.toString());
-          notifyListeners();
-        })
-        .catchError((e) {
-          lastAddedDevices = FirebaseResponse.error(e.toString());
-          notifyListeners();
-        });
+
+    try {
+      final value = await getIt<FirebaseService>().firestore
+          .collection('devices')
+          .get();
+
+      final list = value.docs.map((e) => DeviceModel.fromSnapshot(e)).toList();
+
+      list.shuffle(Random()); // 🎲 random order
+
+      final randomFive = list.take(5).toList();
+
+      lastAddedDevices = FirebaseResponse.completed(randomFive);
+      notifyListeners();
+    } catch (e) {
+      lastAddedDevices = FirebaseResponse.error(e.toString());
+      notifyListeners();
+    }
+
     return lastAddedDevices;
+    // lastAddedDevices = FirebaseResponse.loading('loading');
+    // notifyListeners();
+    // await getIt<FirebaseService>().firestore
+    //     .collection('lastAdded')
+    //     .get()
+    //     .then((QuerySnapshot value) {
+    //       lastAddedDevices = FirebaseResponse.completed(
+    //         value.docs.map((element) {
+    //           return DeviceModel.fromSnapshot(element);
+    //         }).toList(),
+    //       );
+    //       notifyListeners();
+    //     })
+    //     .onError((error, stackTrace) {
+    //       lastAddedDevices = FirebaseResponse.error(error.toString());
+    //       notifyListeners();
+    //     })
+    //     .catchError((e) {
+    //       lastAddedDevices = FirebaseResponse.error(e.toString());
+    //       notifyListeners();
+    //     });
+    // return lastAddedDevices;
   }
 
   void addToCart(DeviceModel deviceModel, int count) {

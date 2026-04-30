@@ -60,33 +60,39 @@ class LastAddedSection extends StatelessWidget {
                                 top: Radius.circular(20),
                               ),
                               child: NetworkCustomImageWidget(
-                                height: 120,
+                                height: 100,
                                 imageUrl: item.image,
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: context.b1.copyWith(
-                                      fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      item.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textScaleFactor: 1.0,
+                                      style: context.b1.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'USD ${item.price}',
-                                    style: context.b1.copyWith(
-                                      color: ColorManager.blue,
-                                      fontWeight: FontWeight.bold,
+                                    Text(
+                                      'USD ${item.price}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.b1.copyWith(
+                                        color: ColorManager.blue,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],
